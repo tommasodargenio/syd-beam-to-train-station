@@ -1,10 +1,10 @@
 --[[
-     Teleport-To-Train-Station
+     Beam-To-Train-Station
      a Factorio mod.
-     (C) SyDream - 2020 - v1.0.6
-     MIT License
-     https://github.com/tommasodargenio/syd-teleport-to-train-station
-     https://mods.factorio.com/mod/syd-teleport-to-train-station
+     (C) SyDream - 2024 - v1.0.0
+
+     https://github.com/tommasodargenio/syd-beam-to-train-station
+     https://mods.factorio.com/mod/syd-beam-to-train-station
      
     
     CONTROL.LUA
@@ -20,17 +20,18 @@ last_teleported_station_count = 0
 is_homonyms = false
 
 function train_station_teleport(player_idx, station_selected)
-    local train_stations_list = get_train_stations_list(train_station_filter)
-    local train_station_position = nil
     local player = game.players[player_idx]
-    local destination_surface = game.surfaces["nauvis"]
+    local destination_surface = player.surface
+    local train_stations_list = get_train_stations_list(destination_surface, train_station_filter)
+    local train_station_position = nil
+
     local destination_pos = nil
     if (station_selected > table_size(train_stations_list)) then return end
    
     train_station_position = train_stations_list[station_selected].position
 
     if last_teleported_station == train_stations_list[station_selected].name then
-        train_station_position = get_next_train_station(train_stations_list[station_selected].name, last_teleported_station_count)
+        train_station_position = get_next_train_station(player.surface, train_stations_list[station_selected].name, last_teleported_station_count)
     else
         last_teleported_station = nil
         last_teleported_station_count = 0
@@ -52,7 +53,7 @@ function train_station_teleport(player_idx, station_selected)
                 if not destination_pos then destination_pos = train_station_position end
                 player.vehicle.teleport(destination_pos, destination_surface)
                 last_teleported_station = train_stations_list[station_selected].name
-                last_teleported_station_count = get_next_station_count(last_teleported_station, last_teleported_station_count)
+                last_teleported_station_count = get_next_station_count(destination_surface, last_teleported_station, last_teleported_station_count)
             end
         elseif player.character and player.character.valid then
 			if math.floor(player.position.x + 0.5) ~= math.floor(train_station_position.x + 0.5) or
@@ -61,12 +62,12 @@ function train_station_teleport(player_idx, station_selected)
                 if not  destination_pos then  destination_pos = train_station_position end
                 player.teleport(destination_pos, destination_surface)
                 last_teleported_station = train_stations_list[station_selected].name
-                last_teleported_station_count = get_next_station_count(last_teleported_station, last_teleported_station_count)
+                last_teleported_station_count = get_next_station_count(destination_surface, last_teleported_station, last_teleported_station_count)
             end
         elseif player and player.valid then
 			player.teleport(train_station_position)
             last_teleported_station = train_stations_list[station_selected].name
-            last_teleported_station_count = get_next_station_count(last_teleported_station, last_teleported_station_count)
+            last_teleported_station_count = get_next_station_count(destination_surface, last_teleported_station, last_teleported_station_count)
         end
     end
 end
@@ -80,18 +81,17 @@ local function has_value (tab, val)
     return false
 end
 
-function get_next_station_count(station_name, current_count)
+function get_next_station_count(player_surface, station_name, current_count)
     current_count = current_count + 1
-    if current_count >= count_train_homonyms(station_name) then
+    if current_count >= count_train_homonyms(player_surface, station_name) then
         current_count = 0
     end  
     return current_count
 end
 
 
-function get_next_train_station(station_name, which)
-    local surface = game.surfaces["nauvis"]
-    local t = surface.get_train_stops()
+function get_next_train_station(player_surface, station_name, which)
+    local t = player_surface.get_train_stops()
     local count = 0
     for _, train_station in pairs(t) do
         if train_station.backer_name == station_name then
@@ -104,9 +104,8 @@ function get_next_train_station(station_name, which)
     end
 end
 
-function count_train_homonyms(station_name)
-    local surface = game.surfaces["nauvis"]
-    local t = surface.get_train_stops()
+function count_train_homonyms(player_surface, station_name)
+    local t = player_surface.get_train_stops()
     local count = 0
     for _, train_station in pairs(t) do
         if train_station.backer_name == station_name then
@@ -118,9 +117,8 @@ function count_train_homonyms(station_name)
 end
 
 
-function are_there_station_homonyms()
-    local surface = game.surfaces["nauvis"]
-    local t = surface.get_train_stops()
+function are_there_station_homonyms(player_surface)
+    local t = player_surface.get_train_stops()
     local checkerTbl = {}
     for _, element in ipairs(t) do
         if not checkerTbl[element.backer_name] then
@@ -133,12 +131,11 @@ function are_there_station_homonyms()
 end
 
 
-function get_train_stations_list(train_filter) 
+function get_train_stations_list(player_surface, train_filter) 
     local train_stations = {}
     local train_stations_ordered = {}
     local train_station_names = {}
-    local surface = game.surfaces["nauvis"]
-    local t = surface.get_train_stops()
+    local t = player_surface.get_train_stops()
 
     for _, train_station in pairs(t) do
 		if not has_value(train_station_names,train_station.backer_name) then
@@ -191,20 +188,26 @@ end
 
 function draw_gui(player_index, train_station_filter, filter_toggle, firstLoad, is_homonyms)
     local gui = game.players[player_index].gui
+    local player_surface = game.players[player_index].surface
     local train_station_list = nil
     resyncTeleportGui(player_index)
 
     if train_station_filter then
-        train_station_list = get_train_stations_name(get_train_stations_list(train_station_filter))
+        train_station_list = get_train_stations_name(get_train_stations_list(player_surface, train_station_filter))
     else
-        train_station_list = get_train_stations_name(get_train_stations_list())
+        train_station_list = get_train_stations_name(get_train_stations_list(player_surface))
     end  
         
     teleport_gui_draw(gui, train_station_list, filter_toggle, firstLoad, player_index, is_homonyms)
 end
 
 function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, player_index, is_homonyms)
-    local teleport_ts_btn = nil  
+    local teleport_ts_btn = nil 
+    
+    if gui.screen["teleport-ts-gui"] then
+        return
+    end
+    local player_surface = game.players[player_index].surface
     teleport_gui = gui.screen.add(teleport_ts_win)
 
     local title_flow = teleport_gui.add{type = "flow", name="title_flow"}
@@ -246,7 +249,7 @@ function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, p
         dd_flow.add{type="label", name="teleport-ts-gui-dd-label", caption={"mod-interface.teleport-ts-gui-dd-caption"}}
         dd_flow.add(teleport_ts_dropdown)
 
-        if count_train_homonyms(train_stations_list[1]) > 0 or is_homonyms then
+        if count_train_homonyms(player_surface, train_stations_list[1]) > 0 or is_homonyms then
             teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button-more"}}
         else
             teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button"}}
@@ -296,9 +299,10 @@ end
 script.on_event(defines.events.on_gui_selection_state_changed, function(event)
     if (event.element.name=="teleport-ts-gui-dd") then
         local gui_win = game.players[event.player_index].gui.screen["teleport-ts-gui"]
+        local player_surface = game.players[event.player_index].surface
         local station_selected = gui_win.dd_flow["teleport-ts-gui-dd"].selected_index
-        local station_list = get_train_stations_list()
-        local total_stations = count_train_homonyms(station_list[station_selected].name)
+        local station_list = get_train_stations_list(player_surface)
+        local total_stations = count_train_homonyms(player_surface, station_list[station_selected].name)
         if total_stations > 1 then
             gui_win.dd_flow["teleport-ts-gui-btn"].caption={"mod-interface.teleport-ts-button-more"}
         else
@@ -326,6 +330,7 @@ script.on_event(defines.events.on_gui_click, function(event)
     if (event.element.name=="teleport-ts-gui-btn") then
         local gui_win = game.players[event.player_index].gui.screen["teleport-ts-gui"]
         train_station_teleport(event.player_index, gui_win.dd_flow["teleport-ts-gui-dd"].selected_index)    
+
     elseif (event.element.name=="teleport-ts-gui-toggle-filter") then
         local gui_win = game.players[event.player_index].gui.screen["teleport-ts-gui"].title_flow
         if (guiElementContains(gui_win.children, "teleport-ts-gui-dd-filter-query")) then
@@ -351,6 +356,42 @@ script.on_event(defines.events.on_gui_click, function(event)
     elseif (event.element.name=="toggleTeleportTS") then
         draw_gui(event.player_index, nil, false, true)     
     end    
+end)
+
+script.on_event(defines.events.on_player_changed_surface, function(event)
+    local player = game.players[event.player_index]
+    if player.gui.screen["teleport-ts-gui"] then
+        if (teleport_gui ~= nil) then 
+            gui_location = teleport_gui.location
+            teleport_gui.destroy()
+        end          
+        draw_gui(event.player_index, nil, false, false)
+    end
+    
+end)
+
+script.on_event(defines.events.on_player_created, function(event)
+    local player = game.players[event.player_index]
+    if player.gui.screen["teleport-ts-gui"] then
+        if (teleport_gui ~= nil) then 
+            gui_location = teleport_gui.location
+            teleport_gui.destroy()
+        end          
+        draw_gui(event.player_index, nil, false, false)
+    end
+    
+end)
+
+script.on_event(defines.events.on_player_joined_game, function(event)
+    local player = game.players[event.player_index]
+    if player.gui.screen["teleport-ts-gui"] then
+        if (teleport_gui ~= nil) then 
+            gui_location = teleport_gui.location
+            teleport_gui.destroy()
+        end          
+        draw_gui(event.player_index, nil, false, false)
+    end
+    
 end)
 
 script.on_configuration_changed(function (changes)

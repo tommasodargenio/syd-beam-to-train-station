@@ -1,10 +1,10 @@
 --[[
-     Teleport-To-Train-Station
+     Beam-To-Train-Station
      a Factorio mod.
-     (C) SyDream - 2020 - v1.0.1
-     MIT License
-     https://github.com/tommasodargenio/syd-teleport-to-train-station
-     https://mods.factorio.com/mod/syd-teleport-to-train-station
+     (C) SyDream - 2024 - v1.0.0
+
+     https://github.com/tommasodargenio/syd-beam-to-train-station
+     https://mods.factorio.com/mod/syd-beam-to-train-station
      
     
     STYLE.LUA
@@ -60,7 +60,7 @@ data:extend({
         action = "lua",
         toggleable = false,
         icon = {
-            filename = "__syd-teleport-to-train-station__/graphics/icons/teleport-ts-button-icon-64.png",        
+            filename = "__syd-beam-to-train-station__/graphics/icons/teleport-ts-button-icon-64.png",        
             priority = "extra-high-no-scale",
             size = 64,
             scale = 1,

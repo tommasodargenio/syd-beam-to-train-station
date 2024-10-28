@@ -1,62 +1,12 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.0.7
-Date: 2024-01-22
-
-  Features:
-    - Added new feature to cycle through stations if multiple exists with the same name
-  Changes:
-    - Button to activate teleport will change its caption if there are more than one station with the same name, indicating that if clicked again it will teleport the player to the next named station
----------------------------------------------------------------------------------------------------
-Version: 1.0.6
-Date: 2022-07-18
-
-  Bugfixes:
-    - Fixed unhandled exception that sometime caused errors in clearing the GUI  (contributor: Christian Moller Nielsen)    
----------------------------------------------------------------------------------------------------
-Version: 1.0.5
-Date: 2022-06-16
-
-  Features:
-    - Added new settings to allow the train station drop down list to be bigger (contributor: Christian Moller Nielsen)
-  Bugfixes:
-    - Fixed bug preventing user to teleport to the correct station when using the search function (contributor: Christian Moller Nielsen)    
----------------------------------------------------------------------------------------------------
-Version: 1.0.4
-Date: 2021-08-15
-
-  Minor Features:
-    - Works with no player characters (contributor: hreintke)
-  Changes:
-    - Train station filter now works only when filter field is visible (contributor: hreintke)
-  Bugfixes:
-    - Removed debug prints (contributor: hreintke)
-    - Fixed typos (contributor: hreintke)
----------------------------------------------------------------------------------------------------
-Version: 1.0.3
-Date: 2021-02-25
-
-  Minor Features:
-    - Update Factorio version so the mod can be used on Factorio 1.1
-
----------------------------------------------------------------------------------------------------
-Version: 1.0.2
-Date: 2020-12-21
-
-  Bugfixes:
-    - Fixed cricital bug when searchbar click after loading a save/autosave. Reference issue on Github [http://bit.ly/3axS1WI]
-  Minor Features:
-    - Search bar now clears when closing the GUI. Reference Feature Request on Github [http://bit.ly/3nFSWbA]
-
----------------------------------------------------------------------------------------------------
-Version: 1.0.1
-Date: 2020-12-20
-
-  Bugfixes:
-    - Fixed bug on GUI getting unresponsive when loading a save/autosave while mod gui is open. Reference issue on Github [http://bit.ly/3h428nJ]
-
----------------------------------------------------------------------------------------------------
 Version: 1.0.0
-Date: 2020-11-14
+Date: 2024-10-28
 
   Info:
-    - Initial Release
+    - Formerly known as Teleport To Train Station
+    - Plugin renamed to Beam To Train Station so that can be used with Space Exploration mod pack
+    - Versioning reset to 1.0.0
+  Major Features:
+    - Supports SE planets
+    - Train station list only local to planet where the player is located
+    - Supports trains stations with same name, when clicking the button to teleport it will cycle through them
