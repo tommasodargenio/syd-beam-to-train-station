@@ -1,7 +1,7 @@
 --[[
      Beam-To-Train-Station
      a Factorio mod.
-     (C) SyDream - 2024 - v1.0.0
+     (C) SyDream - 2024 - v2.0.0
 
      https://github.com/tommasodargenio/syd-beam-to-train-station
      https://mods.factorio.com/mod/syd-beam-to-train-station
@@ -91,7 +91,7 @@ end
 
 
 function get_next_train_station(player_surface, station_name, which)
-    local t = player_surface.get_train_stops()
+    local t = game.train_manager.get_train_stops({player_surface})
     local count = 0
     for _, train_station in pairs(t) do
         if train_station.backer_name == station_name then
@@ -105,7 +105,7 @@ function get_next_train_station(player_surface, station_name, which)
 end
 
 function count_train_homonyms(player_surface, station_name)
-    local t = player_surface.get_train_stops()
+    local t =  game.train_manager.get_train_stops({player_surface})
     local count = 0
     for _, train_station in pairs(t) do
         if train_station.backer_name == station_name then
@@ -118,7 +118,7 @@ end
 
 
 function are_there_station_homonyms(player_surface)
-    local t = player_surface.get_train_stops()
+    local t =  game.train_manager.get_train_stops({player_surface})
     local checkerTbl = {}
     for _, element in ipairs(t) do
         if not checkerTbl[element.backer_name] then
@@ -135,7 +135,7 @@ function get_train_stations_list(player_surface, train_filter)
     local train_stations = {}
     local train_stations_ordered = {}
     local train_station_names = {}
-    local t = player_surface.get_train_stops()
+    local t = game.train_manager.get_train_stops({player_surface})
 
     for _, train_station in pairs(t) do
 		if not has_value(train_station_names,train_station.backer_name) then
@@ -226,8 +226,8 @@ function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, p
         title_flow["teleport-ts-gui-dd-filter-query"].text = train_station_filter
     end
 
-    title_flow.add{type="sprite-button", style="frame_action_button", sprite="utility/search_white", name="teleport-ts-gui-toggle-filter"}
-    title_flow.add{type="sprite-button", style="frame_action_button", sprite="utility/close_white", name="close-teleport-ts-window"}
+    title_flow.add{type="sprite-button", style="frame_action_button", sprite="utility/search", name="teleport-ts-gui-toggle-filter"}
+    title_flow.add{type="sprite-button", style="frame_action_button", sprite="utility/close", name="close-teleport-ts-window"}
 
     if (table_size(train_stations_list)>0) then
         local station_list_size = settings.get_player_settings(player_index)["teleport-ts-station-list-vertical-size"].value

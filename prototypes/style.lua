@@ -59,12 +59,9 @@ data:extend({
         name = "teleport-ts-button-shortcut",
         action = "lua",
         toggleable = false,
-        icon = {
-            filename = "__syd-beam-to-train-station__/graphics/icons/teleport-ts-button-icon-64.png",        
-            priority = "extra-high-no-scale",
-            size = 64,
-            scale = 1,
-            flags = { "gui-icon" }
-        }        
+        icon = "__syd-beam-to-train-station__/graphics/icons/teleport-ts-button-icon-64.png",
+        icon_size = 64,
+        small_icon = "__syd-beam-to-train-station__/graphics/icons/teleport-ts-button-icon-32.png",
+        small_icon_size = 32   
     }
 })
