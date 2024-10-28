@@ -5,6 +5,8 @@ Date: 2024-10-28
   Info:
     - Formerly known as Teleport To Train Station
     - This version supports Factorio 2.x
+  Minor Features:
+    - Now displacement buffer works, player can setup a distance (vertically and/or horizzontaly) to add to the new teleport position
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2024-10-28
