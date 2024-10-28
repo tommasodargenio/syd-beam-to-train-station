@@ -11,7 +11,7 @@ You may want to use this mod if answering yes to one or more of the following qu
 -   Where the heck did I put my Processing Unit factory? (i.e. is taking you a long time to find a factory on your ever expanding map)
 -   Have you ever run out of fuel while getting to your destination and finding yourself in the middle of nowhere? Good luck walking all the way back to base and back again to your vehicle
 
-The interface can be opened with the Shortcut keys (default: CTRL + ALT + SHIFT + X), or by clicking on the button ![shortcut-icon](https://github.com/tommasodargenio/syd-beam-to-train-station/blob/master/graphics/icons/teleport-ts-button-icon-16.png) in your shortcut bar.
+The interface can be opened with the Shortcut keys (default: CTRL + ALT + SHIFT + X), or by clicking on the button ![shortcut-icon](https://github.com/tommasodargenio/syd-beam-to-train-station/blob/main/graphics/icons/teleport-ts-button-icon-16.png) in your shortcut bar.
 
 To add the mod button to the shortcut bar please refer to the [Factorio Wiki](https://wiki.factorio.com/Shortcut_bar)
 
