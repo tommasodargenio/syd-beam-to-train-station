@@ -42,6 +42,10 @@ function train_station_teleport(player_idx, station_selected)
         filter_toggle = true
     end
 
+    local player_x_buffer = settings.get_player_settings(player_idx)["teleport-ts-x-distance-displacement"].value
+    local player_y_buffer = settings.get_player_settings(player_idx)["teleport-ts-y-distance-displacement"].value
+
+    local player_new_position_search_area = {train_station_position.x + player_x_buffer, train_station_position.y + player_y_buffer}
 
     if train_station_position ~= nil then
         if player.vehicle and player.vehicle.valid and player.vehicle.type=="spider-vehicle" then
@@ -49,7 +53,7 @@ function train_station_teleport(player_idx, station_selected)
         elseif player.vehicle and player.vehicle.valid and player.vehicle.type=="car" then
             if math.floor(player.vehicle.position.x + 0.5) ~= math.floor(train_station_position.x + 0.5) or
                math.floor(player.vehicle.position.y + 0.5) ~= math.floor(train_station_position.y + 0.5) then
-                destination_pos = destination_surface.find_non_colliding_position(player.vehicle.prototype.name, train_station_position, 10, 1)
+                destination_pos = destination_surface.find_non_colliding_position(player.vehicle.prototype.name, player_new_position_search_area, 10, 1)
                 if not destination_pos then destination_pos = train_station_position end
                 player.vehicle.teleport(destination_pos, destination_surface)
                 last_teleported_station = train_stations_list[station_selected].name
@@ -58,14 +62,14 @@ function train_station_teleport(player_idx, station_selected)
         elseif player.character and player.character.valid then
 			if math.floor(player.position.x + 0.5) ~= math.floor(train_station_position.x + 0.5) or
                math.floor(player.position.y + 0.5) ~= math.floor(train_station_position.y + 0.5) then
-                destination_pos =  destination_surface.find_non_colliding_position(player.character.prototype.name, train_station_position, 10, 1)
+                destination_pos =  destination_surface.find_non_colliding_position(player.character.prototype.name, player_new_position_search_area, 10, 1)
                 if not  destination_pos then  destination_pos = train_station_position end
                 player.teleport(destination_pos, destination_surface)
                 last_teleported_station = train_stations_list[station_selected].name
                 last_teleported_station_count = get_next_station_count(destination_surface, last_teleported_station, last_teleported_station_count)
             end
         elseif player and player.valid then
-			player.teleport(train_station_position)
+			player.teleport(player_new_position_search_area)
             last_teleported_station = train_stations_list[station_selected].name
             last_teleported_station_count = get_next_station_count(destination_surface, last_teleported_station, last_teleported_station_count)
         end
