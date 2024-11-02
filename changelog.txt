@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.1
+Date: 2024-11-02
+
+  Bugfixes:
+    - Exception error triggered when loading scenario
+    - Showing the more stations button all the time
+    - The dropdown list didn't take into account the length set in the configuration
+    - Removed deprecated property in settings definitions
+---------------------------------------------------------------------------------------------------
 Version: 2.0.0
 Date: 2024-10-28
 
