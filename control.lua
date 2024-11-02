@@ -191,8 +191,8 @@ function on_hotkey_main(event)
 end
 
 function draw_gui(player_index, train_station_filter, filter_toggle, firstLoad, is_homonyms)
-    local gui = game.get_player(player_index).gui
-    local player_surface = game.get_player(player_index).surface
+    local gui = game.players[player_index].gui
+    local player_surface = game.players[player_index].surface
     local train_station_list = nil
     resyncTeleportGui(player_index)
 
@@ -211,7 +211,7 @@ function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, p
     if gui.screen["teleport-ts-gui"] then
         return
     end
-    local player_surface = game.get_player(player_index).surface
+    local player_surface = game.players[player_index].surface
     teleport_gui = gui.screen.add(teleport_ts_win)
 
     local title_flow = teleport_gui.add{type = "flow", name="title_flow"}
@@ -248,11 +248,12 @@ function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, p
        
         local teleport_ts_dropdown = {type="drop-down", name="teleport-ts-gui-dd", style=ts_dropdown_style, items=train_stations_list, selected_index=1}
 
+        local teleport_ts_dropdown = {type="drop-down", name="teleport-ts-gui-dd", items=train_stations_list, selected_index=1}
         local dd_flow = teleport_gui.add{type="flow", name="dd_flow"}            
         dd_flow.add{type="label", name="teleport-ts-gui-dd-label", caption={"mod-interface.teleport-ts-gui-dd-caption"}}
         dd_flow.add(teleport_ts_dropdown)
 
-        if count_train_homonyms(player_surface, train_stations_list[1]) > 1 or is_homonyms then
+        if count_train_homonyms(player_surface, train_stations_list[1]) > 0 or is_homonyms then
             teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button-more"}}
         else
             teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button"}}
@@ -281,10 +282,7 @@ function guiElementContains(haystack, needle)
 end
 
 function cleanGUI()
-    if game.get_player(1) == nil then
-        return
-    end
-    local screenGui = game.get_player(1).gui.screen
+    local screenGui = game.players[1].gui.screen
     if table_size(screenGui.children)>0 then      
         if screenGui["teleport-ts-gui"] ~= nil then   
             local leftoverTSGui = screenGui.children[1]
@@ -295,8 +293,8 @@ function cleanGUI()
 end
 
 function resyncTeleportGui(player_index)
-    if game.get_player(player_index).gui.screen["teleport-ts-gui"] ~= nil then
-        teleport_gui = game.get_player(player_index).gui.screen["teleport-ts-gui"]
+    if game.players[player_index].gui.screen["teleport-ts-gui"] ~= nil then
+        teleport_gui = game.players[player_index].gui.screen["teleport-ts-gui"]
     end
 end
 
