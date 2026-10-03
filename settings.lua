@@ -37,5 +37,12 @@ data:extend({
         default_value = 10,
         allowed_values = {10, 20, 30, 40},
 		order = "c"
+        },
+        {
+                type = "bool-setting",
+                name = "teleport-ts-instant-beam",
+                setting_type = "runtime-per-user",
+                default_value = false,
+		order = "d"
     }
 })
