@@ -1,7 +1,7 @@
 --[[
      Beam-To-Train-Station
      a Factorio mod.
-     (C) SyDream - 2024/26 - v2.0.2
+     (C) SyDream - 2024/26 - v2.0.3
 
      https://github.com/tommasodargenio/syd-beam-to-train-station
      https://mods.factorio.com/mod/syd-beam-to-train-station
@@ -284,11 +284,9 @@ function teleport_gui_draw(gui, train_stations_list, filter_toggle, firstLoad, p
 
         local instant_beam = settings.get_player_settings(player_index)["teleport-ts-instant-beam"].value
         if not instant_beam then
-            if count_train_homonyms(player_surface, train_stations_list[1]) > 1 or is_homonyms then
-                teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button-more"}}
-            else
-                teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button"}}
-            end
+            -- The placeholder is selected by default, so no station is chosen yet:
+            -- the caption is updated once a station is selected.
+            teleport_ts_btn = {type="button", name="teleport-ts-gui-btn", caption={"mod-interface.teleport-ts-button"}}
             dd_flow.add(teleport_ts_btn)
         end
     else 
@@ -333,6 +331,18 @@ function resyncTeleportGui(player_index)
     end
 end
 
+function update_teleport_button_caption(gui_win, player_surface, station_name)
+    local teleport_button = gui_win.dd_flow and gui_win.dd_flow["teleport-ts-gui-btn"]
+    if not teleport_button then
+        return
+    end
+    if station_name and count_train_homonyms(player_surface, station_name) > 1 then
+        teleport_button.caption = {"mod-interface.teleport-ts-button-more"}
+    else
+        teleport_button.caption = {"mod-interface.teleport-ts-button"}
+    end
+end
+
 
 
 script.on_event(defines.events.on_gui_selection_state_changed, function(event)
@@ -349,13 +359,7 @@ script.on_event(defines.events.on_gui_selection_state_changed, function(event)
             gui_win.dd_flow["teleport-ts-gui-dd"].selected_index = 1
             return
         end
-        local total_stations = count_train_homonyms(player_surface, station_list[station_selected].name)
-        if total_stations > 1 then
-            gui_win.dd_flow["teleport-ts-gui-btn"].caption={"mod-interface.teleport-ts-button-more"}
-        else
-            gui_win.dd_flow["teleport-ts-gui-btn"].caption={"mod-interface.teleport-ts-button"}
-        end
-        
+        update_teleport_button_caption(gui_win, player_surface, station_list[station_selected].name)
     end
 end)
 
@@ -482,6 +486,7 @@ local function rebuild_teleport_gui(player_index, gui)
                 if station.name == selected_station_name then
                     -- Index 1 is reserved for the placeholder item.
                     new_gui.dd_flow["teleport-ts-gui-dd"].selected_index = i + 1
+                    update_teleport_button_caption(new_gui, game.players[player_index].surface, selected_station_name)
                     break
                 end
             end
@@ -502,7 +507,8 @@ function auto_update_gui(player_index)
 end
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
-    if event.setting ~= "teleport-ts-instant-beam" then
+    -- player_index is nil when the setting is changed by a script.
+    if event.setting ~= "teleport-ts-instant-beam" or not event.player_index then
         return
     end
 
@@ -521,27 +527,18 @@ local function refresh_open_teleport_guis()
     end
 end
 
-local station_refresh_pending = false
-
 local function schedule_station_list_refresh()
-    if station_refresh_pending then
+    storage.station_refresh_pending = true
+end
+
+script.on_event(defines.events.on_tick, function()
+    if not storage.station_refresh_pending then
         return
     end
 
-    station_refresh_pending = true
-
-    -- TrainManager can finish updating its station index after the entity
-    -- event is raised. Refresh on the following tick so the new index is used.
-    script.on_event(defines.events.on_tick, function()
-        if not station_refresh_pending then
-            return
-        end
-
-        station_refresh_pending = false
-        script.on_event(defines.events.on_tick, nil)
-        refresh_open_teleport_guis()
-    end)
-end
+    storage.station_refresh_pending = false
+    refresh_open_teleport_guis()
+end)
 
 local function on_train_stop_changed(event)
     local entity = event.entity or event.created_entity

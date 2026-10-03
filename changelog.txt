@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.3
+Date: 2026-10-03
+
+  Minor Features:
+    - Added optional Instant Beam setting (per player): when enabled the Energy button is hidden and the player is teleported as soon as a station is selected
+    - Added a "Select station..." placeholder as the first entry of the train station list
+  Bugfixes:
+    - Wrong station used for the button caption when the station list was filtered
+    - Selected station could change to a different one after a station was renamed
+    - Possible error on save/load or multiplayer join while the station list was refreshing
+    - Error when the Instant Beam setting was changed by a script
+    - The Energy button caption didn't match the selected station when the interface was opened or refreshed
+
+---------------------------------------------------------------------------------------------------
 Version: 2.0.2
 Date: 2026-07-15
 
