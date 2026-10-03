@@ -1,7 +1,7 @@
 --[[
      Beam-To-Train-Station
      a Factorio mod.
-     (C) SyDream - 2024/26 - v2.0.2
+     (C) SyDream - 2024/26 - v2.0.3
 
      https://github.com/tommasodargenio/syd-beam-to-train-station
      https://mods.factorio.com/mod/syd-beam-to-train-station
